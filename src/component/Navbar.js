@@ -4,7 +4,7 @@ class Navbar extends Component {
   Logout = () => {
     localStorage.removeItem("Token");
     localStorage.removeItem("role");
-    localStorage.removeItem("user");
+    localStorage.removeItem("users");
     window.location = "/login";
   }
 
@@ -13,7 +13,7 @@ class Navbar extends Component {
       <div className="collapse navbar-collapse" id="navbarNav">
         <ul className="navbar-nav">
           <li className="nav-item">
-            <Link to="/client" className="nav-item nav-link text-align mr-4">Products</Link>
+            <Link to="/sewa" className="nav-item nav-link text-align mr-4">Sewa</Link>
           </li>
           <li>
             <Link to="/login" className="nav-item nav-link text-align mr-4">Login</Link>
@@ -29,16 +29,13 @@ class Navbar extends Component {
           <ul className="navbar-nav">
 
             <li className="navbar-item">
-              <Link className="nav-link text-info"  to="/products">Products</Link>
+              <Link className="nav-link text-info"  to="/lapangan">Lapangan</Link>
             </li>
             <li className="navbar-item">
-              <Link className="nav-link text-info" to="/user">User</Link>
+              <Link className="nav-link text-info" to="/Member">Member</Link>
             </li>
             <li className="navbar-item">
-              <Link className="nav-link text-info" to="/profil">Profil</Link>
-            </li>
-            <li className="navbar-item">
-              <Link className="nav-link text-info" to="/orders">Order</Link>
+              <Link className="nav-link text-info" to="/nyewa">Sewa</Link>
             </li>
             <li className="navbar-item">
               <a className="nav-link text-danger" onClick={this.Logout}>Logout</a>
@@ -54,7 +51,7 @@ class Navbar extends Component {
           <ul className="navbar-nav">
 
             <li className="navbar-item">
-              <Link className="nav-link text-info"  to="/client">Products</Link>
+              <Link className="nav-link text-info"  to="/sewa">Sewa</Link>
             </li>
             <li className="navbar-item">
               <Link className="nav-link text-info" to="/profil">Profil</Link>
@@ -73,13 +70,13 @@ class Navbar extends Component {
     return(
       <div>
         <nav className="navbar navbar-expand-lg navbar-light bg-dark">
-          <a className="navbar-brand ml-5 text-white" href="#">Shop</a>
+          <a className="navbar-brand ml-5 text-white" href="#">SEWA LAPANGAN</a>
           <button className="navbar-toggler btn-light" type="button" data-toggle="collapse"
           data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
           aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
-          { !auth ? this.navGuest() : role === "Admin" ? this.navAdmin() : this.navUser() }
+          { !auth ? this.navGuest() : role === "admin" ? this.navAdmin() : this.navUser() }
         </nav>
       </div>
     );

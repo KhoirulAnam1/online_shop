@@ -15,8 +15,8 @@ export default class ProductItem extends React.Component {
 
     addToCart = (item) => {
         let oldItems = JSON.parse(localStorage.getItem('cart')) || []
-        let newid = item.id_product
-        let match = oldItems.find(({ id_product }) => id_product === newid);
+        let newid = item.id
+        let match = oldItems.find(({ id }) => id === newid);
         if (match)
         {
                 match['qty'] += parseInt(this.state.quantity);

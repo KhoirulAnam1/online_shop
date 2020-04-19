@@ -1,325 +1,274 @@
-import React, {Component} from "react";
+import React,{Component} from "react";
 import axios from "axios";
 import $ from "jquery";
-import { Link } from 'react-router-dom';
+import Image from '../image/lapangan.jpg';
 import Modal from "../component/Modal";
 import Toast from "../component/Toast";
-import hantu from '../image/hantu.jpg';
+
 class Profil extends Component {
-    constructor() {
-        super();
-        this.state = {
-            user: [],
-            alamat: [],
-            id_pengiriman: "",
-            nama_penerima: "",
-            kode_pos: "",
-            kecamatan: "",
-            kota: "",
-            jalan: "",
-            rt: "",
-            rw: "",
-            id_user: "",
-            nama_user: "",
-            email: "",
-            password: "",
-            role: "",
-            no_ktp: "",
-            nama_lengkap: "",
-            jenis_kelamin: "",
-            tanggal_lahir: "",
-            no_hp: "",
-            action: "",
-            find: "",
-            message: ""
-        }
-        if (!localStorage.getItem("Token")) {
-            window.location = "/login";
-          }
+  constructor() {
+    super();
+    this.state = {
+      myProfil: [],
+      profil: [],
+      Users: [],
+      id: "",
+      Username: "",
+      email: "",
+      password: "",
+      role: "",
+      first_name: "",
+      last_name: "",
+      gender: "",
+      date_birth:"",
+      image: null,
+      no_hp: "",
+      last_password: "",
+      new_password: "",
+      action: "",
+      find: "",
+      message: ""
     }
+
+    // // jika tidak terdapat data token pada local storage
+    if(!localStorage.getItem("Token")){
+      // direct ke halaman login
+      window.location = "/login";
+    }
+  }
 
     bind = (event) => {
-        this.setState({[event.target.name] : event.target.value});
+      this.setState({[event.target.name] : event.target.value});
     }
-    
+
+    bindImage = (event) => {
+      this.setState({image: event.target.files[0]})
+    }
+
     Edit = (item) => {
-        // membuka modal
-        $("#modal_user").modal("show");
-        // mengisikan data pada form
-        this.setState({
-            action: "update",
-            id_user: item.id_user,
-            nama_user: item.nama_user,
-            nama_lengkap: item.nama_lengkap,
-            no_ktp: item.no_ktp,
-            jenis_kelamin: item.jenis_kelamin,
-            tanggal_lahir: item.tanggal_lahir,
-            no_hp: item.no_hp
-        });
-    }
-
-    Edit_alamat = (item) => {
-        // membuka modal
-        $("#modal_alamat").modal("show");
-        // mengisikan data pada form
-        this.setState({
-            action: "update",
-            id_pengiriman: item.id_pengiriman,
-            id_user: item.id_user,
-            nama_penerima: item.nama_penerima,
-            kode_pos: item.kode_pos,
-            kecamatan: item.kecamatan,
-            kota: item.kota,
-            jalan: item.jalan,
-            rt: item.rt,
-            rw: item.rw,
-        });
-    }
-
-    Add_alamat = () => {
-        $("#modal_alamat").modal("show");
-
-        this.setState({
-            action: "insert",
-            id_pengiriman: "",
-            id_user: "",
-            nama_penerima: "",
-            kode_pos: "",
-            kecamatan: "",
-            kota: "",
-            jalan: "",
-            rt: "",
-            rw: "",
-        });
-    }
-
-    get_user = () => {
-        let id_user = JSON.parse(localStorage.getItem('id_user'))
-        let url = "http://localhost/toko_online/public/user/"+id_user;
-        axios.get(url)
-        .then(response => {
-            this.setState({
-                user: response.data.user,
-            });
-        })
-        .catch(error => {
-            console.log(error);
-        });
-    }
-
-    get_alamat = () => {
-        let id = JSON.parse(localStorage.getItem('id_user'))
-        let url = "http://localhost/toko_online/public/alamat/"+id;
-        axios.get(url)
-        .then(response => {
-            this.setState({
-                alamat: response.data.alamat,
-            });
-        })
-        .catch(error => {
-            console.log(error);
-        });
+      // membuka modal
+      $("#modal_profil").modal("show");
+      // mengisikan data pada form
+      this.setState({
+        action: "update",
+        id: item.id,
+        username: item.username,
+        email: item.email,
+        first_name: item.first_name,
+        last_name: item.last_name,
+        gender: item.gender,
+        date_birth: item.date_birth,
+        no_hp: item.no_hp,
+        alamat: item.alamat
+      });
     }
     
+    getProfil = () => {
+        // $("#loading").toast("show");
+        let id = JSON.parse(localStorage.getItem('id'))
+        let url = "http://localhost/lapangan/public/myprofil/" + id;
+        axios.get(url)
+        .then(response => {
+            this.setState({profil: response.data.profil});
+            $("#loading").toast("hide");
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
+
+    Drop = (id) => {
+      if(window.confirm("Apakah anda yakin ingin menghapus data ini?")) {
+        // $("#loading").toast("show");
+        let url = "http://localhost/eproduk/public/user"+id.user;
+        axios.delete(url)
+        .then(response => {
+          $("#loading").toast("hide");
+          this.setState({message: response.data.message});
+          $("#message").toast("show");
+          this.get_user();
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      }
+    }
+
     componentDidMount = () => {
-        this.get_user();
-        this.get_alamat();
+      this.getProfil();
+      // alert('page profil');
     }
 
     Save = (event) => {
-        console.log(this.state.id_user)
-        event.preventDefault();
-        $("#modal_user").modal("hide");
-        let url = "http://localhost/toko_online/public/user/save_profil";
-        let form = new FormData();
-        form.append("action", this.state.action);
-        form.append("id_user", this.state.id_user);
-        form.append("email", this.state.email);
-        form.append("password", this.state.password);
-        form.append("role", this.state.role);
-        form.append("nama_user", this.state.nama_user);
-        form.append("nama_lengkap", this.state.nama_lengkap);
-        form.append("no_ktp", this.state.no_ktp);
-        form.append("jenis_kelamin", this.state.jenis_kelamin);
-        form.append("tanggal_lahir", this.state.tanggal_lahir);
-        form.append("no_hp", this.state.no_hp);
-        axios.post(url, form)
-        .then(response => {
-            this.setState({
-                message: response.data.message});
-            $("#message").toast("show");
-            this.get_user();
-        })
-        .catch(error => {
-            console.log(error);
-        });
+      event.preventDefault();
+      // $("#loading").toast("show");      
+      $("#modal_profil").modal("hide");
+      let url = "http://localhost/lapangan/public/myprofil/save";
+      let form = new FormData();
+      form.append("action", this.state.action);
+      form.append("id", this.state.id);
+      form.append("username", this.state.username);
+      form.append("email", this.state.email);
+      form.append("password", this.state.password);
+      form.append("role", this.state.role);
+      form.append("first_name", this.state.first_name);
+      form.append("last_name", this.state.last_name);
+      form.append("gender", this.state.gender);
+      form.append("date_birth", this.state.date_birth);
+      form.append("no_hp", this.state.no_hp);
+      form.append("alamat", this.state.alamat);
+      // if (form.has("img_brg")){
+      // form.append("img_brg", this.state.img_brg, this.state.img_brg.name);
+      // }
+
+      axios.post(url, form)
+      .then(response => {
+        // $("#loading").toast("hide");
+        this.setState({message: response.data});
+        $("#message").toast("show");
+        this.getProfil();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    }
+    
+    SavePwd = (event) => {
+      event.preventDefault();
+      // $("#loading").toast("show");      
+      $("#modal_pwd").modal("hide");
+      let url = "http://localhost/lapangan/public/myprofil/pwd";
+      let form = new FormData();
+      form.append("action", this.state.action);
+      form.append("id", this.state.id);
+      form.append("last_password", this.state.last_password);
+      form.append("new_password", this.state.new_password);
+
+      axios.post(url, form)
+      .then(response => {
+        // $("#loading").toast("hide");
+        // this.setState({message: response.data});
+        // $("#message").toast("show");
+        this.getProfil();
+      })
+      .catch(error => {
+        console.log(error);
+      });
     }
 
-    Save_alamat = (event) => {
-        let id = JSON.parse(localStorage.getItem('id_user'))
-        event.preventDefault();
-        $("#modal_alamat").modal("hide");
-        let url = "http://localhost/toko_online/public/alamat/save";
+    search = (event) => {
+      if(event.keyCode === 13) {
+        $("#loading").toast("show");
+        let url = "http://localhost/eproduk/public/profiles";
         let form = new FormData();
-        form.append("action", this.state.action);
-        form.append("id_pengiriman", this.state.id_pengiriman);
-        form.append("id_user", this.state.id_user);
-        form.append("nama_penerima", this.state.nama_penerima);
-        form.append("kode_pos", this.state.kode_pos);
-        form.append("kecamatan", this.state.kecamatan);
-        form.append("kota", this.state.kota);
-        form.append("jalan", this.state.jalan);
-        form.append("rt", this.state.rt);
-        form.append("rw", this.state.rw);
+        form.append("find", this.state.find);
         axios.post(url, form)
         .then(response => {
-            this.setState({
-                message: response.data.message});
-            $("#message").toast("show");
-            this.get_alamat();
+          $("#loading").toast("hide");
+          this.setState({profiles: response.data.profiles});
         })
         .catch(error => {
-            console.log(error);
+          console.log(error);
         });
+      }
     }
-
-    Drop_alamat = (id_pengiriman) => {
-        if (window.confirm("Are you sure you want to drop this data?")) {
-          $("#loading").toast("show");
-          let url = "http://localhost/toko_online/public/alamat/drop/" + id_pengiriman;
-          axios
-            .delete(url)
-            .then(response => {
-              $("#loading").toast("hide");
-              this.setState({ message: response.data.message });
-              $("#message").toast("show");
-              this.get_alamat();
-            })
-            .catch(error => {
-              console.log(error);
-            });
-        }
-      };
 
     render(){
-        const { user, alamat } = this.state;
-        console.log(user)
-        console.log(alamat)
-        return (
-            <div className="container">
+      return(
+        <div className="container">
             <div className="card mt-2">
                 <div style={{ paddingTop: "5%", paddingLeft: "7%" }}>
                     <div className="#" style={{ maxWidth: "1000px" }}>
                         <div className="row no-gutters">
                             <div className="col-md-4">
-                                <img className="rounded float-left" src={hantu} style={{ height: "240px", width: "350px"}} />
-                                    <input aria-hidden="true" type="file" className="fa fa-upload" name="image"
-                                        onChange={this.bindImage} required />
+                                <img className="rounded float-left" src={Image} style={{ height: "240px", width: "350px"}} />
                             </div>
-                            <div style={{ paddingTop: "2%" , paddingLeft: "0%" }}>
+                            <div style={{ paddingTop: "0%" , paddingLeft: "2%" }}>
                             <div className="card-body">
-                                <h4 className="card-title" style={{ fontWeight: "700" }}>Profile</h4>
+                                <h4 className="card-title" style={{ fontWeight: "700" }}>Data Profile</h4>
                                 <table className="table table-borderless">
-                                    {user.map((item,index) => {
-                                        return (
-                                            <ul class="list-group" key={index}>
-                                                <li class="list-group-item">Username : {item.nama_user}</li>
-                                                <li class="list-group-item">Email : {item.email}</li>
-                                                <li class="list-group-item">Nama Lengkap : {item.nama_lengkap}</li>
-                                                <li class="list-group-item">No KTP : {item.no_ktp}</li>
-                                                <li class="list-group-item">Jenis Kelamin : {item.jenis_kelamin}</li>
-                                                <li class="list-group-item">Tanggal Lahir : {item.tanggal_lahir}</li>
-                                                <li class="list-group-item">No Hp : +62{item.no_hp}</li>
-                                            <button className="m-1 btn btn-sm btn-outline-dark" onClick={() => this.Edit(item)}>
-                                                <span className="fa fa-edit"></span>Edit
-                                            </button>
-                                            </ul>
-                                        );
-                                    })}
-                                    <h4 className="card-title" style={{ fontWeight: "700" }}>Data Alamat</h4>
-                                    {/* <button className="btn btn-success my-2" onClick={this.Add_alamat}>
-                                        <span className="fa fa-plus-circle"></span> Tambah Alamat
-                                    </button> */}
-                                    {alamat.map((item) => {
-                                        return (
-                                            <ul class="list-group">
-                                                <li class="list-group-item">Nama Penerima : {item.nama_penerima}</li>
-                                                <li class="list-group-item">Kode Pos : {item.kode_pos}</li>
-                                                <li class="list-group-item">Kecamatan : {item.kecamatan}</li>
-                                                <li class="list-group-item">Kota : {item.kota}</li>
-                                                <li class="list-group-item">Jalan : {item.jalan}</li>
-                                                <li class="list-group-item">RT : {item.rw}</li>
-                                                <li class="list-group-item">RW : +62{item.rw}</li>
-                                            <button className="m-1 btn btn-sm btn-outline-dark" onClick={() => this.Edit_alamat(item)}>
-                                                <span className="fa fa-edit"></span>Edit
-                                            </button>
-                                            <button className="m-1 btn btn-sm btn_outline-danger"
-                                                onClick={() => this.Drop_alamat(item.id_pengiriman)}>   
-                                                <span className="fa fa-trash"></span>
-                                            </button>
-                                            </ul>
-                                        );
-                                    })} 
-
+                                {this.state.profil.map((item) => { 
+                        return(
+                          <tbody>
+                            <tr>
+                              <td>
+                              <tr>
+                                <td>Username</td>
+                                <td>: {item.username}</td>
+                              </tr>
+                              <tr>
+                                <td>Email</td>
+                                <td>: {item.email}</td>
+                              </tr>
+                              <tr>
+                                <td>Password</td>
+                                <td>: {item.password}</td>
+                              </tr>
+                              <tr>
+                                <td>Role</td>
+                                <td>: {item.role}</td>
+                              </tr>
+                              </td>
+                              <td>
+                              <tr>
+                                <td>First Name</td>
+                                <td>: {item.first_name}</td>
+                              </tr>
+                              <tr>
+                                <td>Last Name</td>
+                                <td>: {item.last_name}</td>
+                              </tr>
+                              <tr>
+                                <td>Gender</td>
+                                <td>: {item.gender}</td>
+                              </tr>
+                              <tr>
+                                <td>TTL</td>
+                                <td>: {item.date_birth}</td>
+                              </tr>
+                              </td>
+                            </tr>
+                            <button className="m-1 btn btn-sm btn-outline-warning" onClick={() =>this.Edit(item)}>
+                                <span className="fa fa-edit">Edit</span>
+                            </button>
+                      </tbody>
+                        )
+                      })}
                                 </table>
                             </div>
                             </div>
                             
-                            <Modal id="modal_user" title="Form User" bg_header="success"
-                                text_header="white">
-                                <form onSubmit={this.Save}>
-                                    Username
-                                    <input type="text" className="form-control" name="nama_user"
-                                    value={this.state.nama_user} onChange={this.bind} required />
-                                    Nama Lengkap
-                                    <input type="text" className="form-control" name="nama_lengkap"
-                                    value={this.state.nama_lengkap} onChange={this.bind} required />
-                                    No KTP
-                                    <input type="text" className="form-control" name="no_ktp"
-                                    value={this.state.no_ktp} onChange={this.bind} required />
-                                    Jenis Kelamin
-                                    <input type="text" className="form-control" name="jenis_kelamin"
-                                    value={this.state.jenis_kelamin} onChange={this.bind} required />
-                                    Tanggal Lahir
-                                    <input type="date" className="form-control" name="tanggal_lahir"
-                                    value={this.state.tanggal_lahir} onChange={this.bind} required />
-                                    No HP
-                                    <input type="text" className="form-control" name="no_hp"
-                                    value={this.state.no_hp} onChange={this.bind} required />
-                                    <button type="submit" className="btn btn-info pull-right m-2">
-                                    <span className="fa fa-check"></span> Simpan
-                                    </button>
-                                </form>
-                            </Modal>
-                            <Modal id="modal_alamat" title="Form Alamat" bg_header="success"
-                                text_header="white">
-                                <form onSubmit={this.Save_alamat}>
-                                    Nama Penerima
-                                    <input type="text" className="form-control" name="nama_penerima"
-                                    value={this.state.nama_penerima} onChange={this.bind} required />
-                                    Kode Pos
-                                    <input type="text" className="form-control" name="kode_pos"
-                                    value={this.state.kode_pos} onChange={this.bind} required />
-                                    Kecamatan
-                                    <input type="text" className="form-control" name="kecamatan"
-                                    value={this.state.kecamatan} onChange={this.bind} required />
-                                    Kota
-                                    <input type="text" className="form-control" name="kota"
-                                    value={this.state.kota} onChange={this.bind} required />
-                                    Jalan
-                                    <input type="text" className="form-control" name="jalan"
-                                    value={this.state.jalan} onChange={this.bind} required />
-                                    RT
-                                    <input type="text" className="form-control" name="rt"
-                                    value={this.state.rt} onChange={this.bind} required />
-                                    RW
-                                    <input type="text" className="form-control" name="rw"
-                                    value={this.state.rw} onChange={this.bind} required />
-                                    <button type="submit" className="btn btn-info pull-right m-2">
-                                    <span className="fa fa-check"></span> Simpan
-                                    </button>
-                                </form>
-                            </Modal>
+                            <Modal id="modal_profil" title="Form Profile" bg_header="secondary" text_header="white">
+                <form onSubmit={this.Save}>
+                  Username
+                    <input type="text" className="form-control" name="username" value={this.state.username} onChange={this.bind} required />
+                  Email
+                    <input type="text" className="form-control" name="email" value={this.state.email} onChange={this.bind} required />
+                  First Name
+                    <input type="text" className="form-control" name="first_name" value={this.state.first_name} onChange={this.bind} required />
+                  Last Name
+                    <input type="text" className="form-control" name="last_name" value={this.state.last_name} onChange={this.bind} required />
+
+                  <div className="form-group">
+                    <label htmlFor="role">Jenis Kelamin</label>
+                    <select className="form-control" name="gender" value={this.state.gender} onChange={this.bind} required>
+                      <option value="L">Laki laki</option>
+                      <option value="P">Perempuan</option>
+                    </select>
+                  </div>
+                  
+                  Tanggal Lahir
+                    <input type="date" className="form-control" name="date_birth" value={this.state.date_birth} onChange={this.bind} required />
+                  Nomor HP
+                  <input type="int" className="form-control" name="no_hp" value={this.state.no_hp} onChange={this.bind}  />
+                  Alamat
+                    <input type="text" className="form-control" name="alamat" value={this.state.alamat} onChange={this.bind}  />
+                  
+                  <button type="submit" className="btn btn-info pull-right m-2">
+                    <span className="fa fa-check"></span> Simpan
+                  </button>
+                </form>
+              </Modal>
                             
                         </div>
                     </div>

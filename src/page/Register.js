@@ -6,9 +6,8 @@ class Register extends React.Component {
   constructor() {
     super();
     this.state = {
-        user: [],
-        id_user: "",
-        nama_user: "",
+        users: [],
+        username: "",
         email: "",
         password: "",
         repassword: "",
@@ -27,9 +26,9 @@ class Register extends React.Component {
       event.preventDefault();
       if (this.state.password === this.state.repassword)
       {
-        let url = "http://localhost/toko_online/public/user/register";
+        let url = "http://localhost/lapangan/public/register";
         let form = new FormData();
-        form.append("nama_user", this.state.nama_user)
+        form.append("username", this.state.username)
         form.append("email", this.state.email)
         form.append("password", this.state.password)
         axios.post(url, form)
@@ -53,8 +52,8 @@ class Register extends React.Component {
       style={{width: 24 + "rem", paddingTop: 6 + "rem"}}>
         <h3 className="mt-4 text-center">Register</h3>
         <form onSubmit={this.Save}>
-          <input type="text" className="form-control mt-4" name="nama_user" placeholder="Username"
-          value={this.state.nama_user}
+          <input type="text" className="form-control mt-4" name="username" placeholder="username"
+          value={this.state.nama}
           onChange={this.bind} required />
 
           <input type="email" className="form-control mt-4" name="email" placeholder="Email"
@@ -71,7 +70,7 @@ class Register extends React.Component {
 
           <button type="submit" className="btn btn-black btn-primary mt-4">Register</button>
         </form>
-        <p className="text-center mt-2">Already have an account? <Link to="/">Login</Link></p>
+        <p className="text-center mt-2">Already have an account? <Link to="/login">Login</Link></p>
       </div>
     )
   }

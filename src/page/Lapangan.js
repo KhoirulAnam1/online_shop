@@ -4,17 +4,15 @@ import $ from "jquery";
 import Modal from "../component/Modal";
 import Toast from "../component/Toast";
 
-class Products extends Component {
+class Lapangan extends Component {
   constructor() {
     super();
     this.state = {
-      products: [],
-      id_product: "",
-      name: "",
-      available_quality: "",
-      price: "",
-      description: "",
-      images: null,
+      lapangan: [],
+      id: "",
+      nama: "",
+      harga: "",
+      gambar: null,
       action: "",
       find: "",
       message: ""
@@ -25,8 +23,8 @@ class Products extends Component {
     }
   }
 
-  bindImages = (e) => {
-    this.setState({images: e.target.files[0]})
+  bindGambar = (e) => {
+    this.setState({gambar: e.target.files[0]})
   }
 
   bind = event => {
@@ -35,41 +33,37 @@ class Products extends Component {
 
   Add = () => {
     // shows modal
-    $("#modal_products").modal("show");
+    $("#modal_lapangan").modal("show");
     // empties form data
     this.setState({
       action: "insert",
-      id_product: "",
-      name: "",
-      available_quality: "",
-      price: "",
-      description: "",
-      images: null
+      id: "",
+      nama: "",
+      harga: "",
+      gambar: null
       });
   };
 
   Edit = item => {
     // shows modal
-    $("#modal_products").modal("show");
+    $("#modal_lapangan").modal("show");
     // fills in form data
     this.setState({
       action: "update",
-      id_product: item.id_product,
-      name: item.name,
-      available_quality: item.available_quality,
-      price: item.price,
-      description: item.description,
-      images: item.images
+      id: item.id,
+      nama: item.nama,
+      harga: item.harga,
+      gambar: item.gambar
     });
   };
 
-  get_products = () => {
+  get_lapangan = () => {
     $("#loading").toast("show");
-    let url = "http://localhost/toko_online/public/products";
+    let url = "http://localhost/lapangan/public/lapangan";
     axios
       .get(url)
       .then(response => {
-        this.setState({ products: response.data.products });
+        this.setState({ lapangan: response.data.lapangan });
         $("#loading").toast("hide");
       })
       .catch(error => {
@@ -77,17 +71,17 @@ class Products extends Component {
       });
   };
 
-  Drop = id_product => {
+  Drop = id => {
     if (window.confirm("Are you sure you want to drop this data?")) {
       $("#loading").toast("show");
-      let url = "http://localhost/toko_online/public/products/drop/" + id_product;
+      let url = "http://localhost/lapangan/public/lapangan/drop/" + id;
       axios
         .delete(url)
         .then(response => {
           $("#loading").toast("hide");
           this.setState({ message: response.data.message });
           $("#message").toast("show");
-          this.get_products();
+          this.get_lapangan();
         })
         .catch(error => {
           console.log(error);
@@ -96,7 +90,7 @@ class Products extends Component {
   };
 
   componentDidMount = () => {
-    this.get_products();
+    this.get_lapangan();
   };
 
   Save = event => {
@@ -104,16 +98,14 @@ class Products extends Component {
     // shows loading process
     $("#loading").toast("show");
     // closes modal form
-    $("#modal_products").modal("hide");
-    let url = "http://localhost/toko_online/public/products/save";
+    $("#modal_lapangan").modal("hide");
+    let url = "http://localhost/lapangan/public/lapangan/save";
     let form = new FormData();
     form.append("action", this.state.action);
-    form.append("id", this.state.id_product);
-    form.append("name", this.state.name);
-    form.append("available_quality", this.state.available_quality);
-    form.append("price", this.state.price);
-    form.append("description", this.state.description);
-    form.append("images", this.state.images, this.state.images.name);
+    form.append("id", this.state.id);
+    form.append("nama", this.state.nama);
+    form.append("harga", this.state.harga);
+    form.append("gambar", this.state.gambar);
     
     axios
       .post(url, form)
@@ -121,7 +113,7 @@ class Products extends Component {
         $("#loading").toast("hide");
         this.setState({ message: response.data.message });
         $("#message").toast("show");
-        this.get_products();
+        this.get_lapangan();
       })
       .catch(error => {
         console.log(error);
@@ -131,14 +123,14 @@ class Products extends Component {
   search = event => {
     if (event.keyCode === 13) {
       $("#loading").toast("show");
-      let url = "http://localhost/toko_online/public/products";
+      let url = "http://localhost/lapangan/public/lapangan/find";
       let form = new FormData();
       form.append("find", this.state.find);
       axios
         .post(url, form)
         .then(response => {
           $("#loading").toast("hide");
-          this.setState({ products: response.data.products });
+          this.setState({ lapangan: response.data.lapangan });
         })
         .catch(error => {
           console.log(error);
@@ -154,7 +146,7 @@ class Products extends Component {
           <div className="card-header bg-dark">
             <div className="row">
               <div className="col-sm-8">
-                <h4 className="text-white">Data Products</h4>
+                <h4 className="text-white"></h4>
               </div>
 
               <div className="col-sm-4">
@@ -182,25 +174,21 @@ class Products extends Component {
               <thead>
                 <tr>
                   <th>Id</th>
-                  <th>Name</th>
-                  <th>Available Quality</th>
-                  <th>Price</th>
-                  <th>Description</th>
-                  <th>Images</th>
+                  <th>Nama</th>
+                  <th>Harga</th>
+                  <th>Gambar</th>
                   <th>Opsi</th>
                 </tr>
               </thead>
               <tbody>
-                {this.state.products.map(item => {
+                {this.state.lapangan.map(item => {
                   return (
-                    <tr key={item.id_product}>
-                      <td>{item.id_product}</td>
-                      <td>{item.name}</td>
-                      <td>{item.available_quality}</td>
-                      <td>Rp. {item.price}</td>
-                      <td>{item.description}</td>
-                      <td><img src={'http://localhost/toko_online/public/images/' + item.images}
-                          alt={item.images} width="200px" height="200px"/></td>
+                    <tr>
+                      <td>{item.id}</td>
+                      <td>{item.nama}</td>
+                      <td>Rp. {item.harga}</td>
+                      <td><img src={'http://localhost/lapangan/public/images/' + item.gambar}
+                          alt={item.gambar} width="200px" height="200px"/></td>
                       <td>
                         <button
                           className="m-1 btn btn-sm btn-info"
@@ -228,63 +216,36 @@ class Products extends Component {
 
             {/* user modal form */}
             <Modal
-              id="modal_products"
-              title="Form Products"
+              id="modal_lapangan"
+              title="Form Lapangan"
               bg_header="success"
               text-header="white"
             >
               <form onSubmit={this.Save}>
-                Id
+                Nama
                 <input
                   type="text"
                   className="form-control"
-                  name="id_product"
-                  value={this.state.id_product}
+                  name="nama"
+                  value={this.state.nama}
                   onChange={this.bind}
                   required
                 />
-                Name
+                Harga
                 <input
                   type="text"
                   className="form-control"
-                  name="name"
-                  value={this.state.name}
+                  name="harga"
+                  value={this.state.harga}
                   onChange={this.bind}
                   required
                 />
-                Available Quality
-                <input
-                  type="text"
-                  className="form-control"
-                  name="available_quality"
-                  value={this.state.available_quality}
-                  onChange={this.bind}
-                  required
-                />
-                Price
-                <input
-                  type="text"
-                  className="form-control"
-                  name="price"
-                  value={this.state.price}
-                  onChange={this.bind}
-                  required
-                />
-                Description
-                <input
-                  type="text"
-                  className="form-control"
-                  name="description"
-                  value={this.state.description}
-                  onChange={this.bind}
-                  required
-                />
-                Images
+                Gambar
                 <input
                   type="file"
                   className="form-control"
-                  name="images"
-                  onChange={this.bindImages}
+                  name="gambar"
+                  onChange={this.bindGambar}
                   required
                 />
                 <button className="btn btn-info pull-right m-2">
@@ -299,5 +260,5 @@ class Products extends Component {
   }
 }
 
-export default Products;
+export default Lapangan;
 

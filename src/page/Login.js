@@ -8,7 +8,7 @@ class Login extends Component {
   constructor() {
     super();
     this.state = {
-      email: "",
+      username: "",
       password: "",
       message: ""
     }
@@ -20,9 +20,9 @@ class Login extends Component {
 
   Login = (event) => {
     event.preventDefault();
-    let url = "http://localhost/toko_online/public/user/auth";
+    let url = "http://localhost/lapangan/public/login";
     let form = new FormData();
-    form.append("email", this.state.email);
+    form.append("username", this.state.username);
     form.append("password", this.state.password);
     axios.post(url, form)
     .then(response => {
@@ -30,22 +30,20 @@ class Login extends Component {
       let role = response.data.role;
       if (logged) {
 
-        if(role === "Admin"){
-          window.location = "/user";
+        if(role === "admin"){
+          window.location = "/lapangan";
         }else{
-          window.location = "/client";
-
+          window.location = "/sewa";
         }
 
         this.setState({message: "Login Berhasil"});
         //menyimpan data token pada local storage
         localStorage.setItem("Token", response.data.token);
         //menyimpan data login user ke local storage
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+        localStorage.setItem("id", JSON.stringify(response.data.users.id));
         //direct ke halaman data siswa
         localStorage.setItem("role", response.data.role);
-        // menyimpan data login user ke local storage
-        localStorage.setItem("id_user", JSON.stringify(response.data.user.id_user));
+        
         
       } else {
         this.setState({message: "Login Gagal"});
@@ -69,9 +67,9 @@ class Login extends Component {
             {this.state.message}
             </Toast>
             <form onSubmit={this.Login}>
-              <input type="text" className="form-control my-3" name="email"
-                value={this.state.email} onChange={this.bind}
-                required placeholder="Masukkan Email" />
+              <input type="text" className="form-control my-3" name="username"
+                value={this.state.username} onChange={this.bind}
+                required placeholder="Masukkan Username" />
               <input type="password" className="form-control my-4" name="password"
                 value={this.state.password} onChange={this.bind}
                 required placeholder="Masukkan Password" />

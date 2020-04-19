@@ -2,14 +2,14 @@ import React, {Component} from "react";
 import {Switch, Route} from "react-router-dom";
 
 import Navbar from "./component/Navbar";
-import Products from "./page/Products";
-import User from "./page/User";
-import Profil from "./page/Profil";
+import Sewa from "./page/sewa";
+import Lapangan from "./page/Lapangan";
 import Login from "./page/Login";
 import Register from "./page/Register";
-import Product from "./page/product";
-import Cart from "./page/Cart";
-import Orders from "./page/Orders";
+import Member from "./page/Member";
+import Nyewa from "./page/Nyewa";
+import Profil from "./page/Profil";
+
 
 class Main extends Component{
     render = () => {
@@ -17,30 +17,26 @@ class Main extends Component{
             <Switch>
                 <Route path="/login" component={Login} />
                 <Route path="/register" component={Register} />
-                <Route path="/products"> 
+                <Route path="/sewa"> 
                 <Navbar />
-                <Products />
+                <Sewa />
                 </Route>
-                <Route path="/user"> 
+                <Route path="/lapangan"> 
                 <Navbar />
-                <User />
+                <Lapangan />
+                </Route>
+                <Route path="/member"> 
+                <Navbar />
+                <Member />
+                </Route>
+                <Route path="/nyewa"> 
+                <Navbar />
+                <Nyewa />
                 </Route>
                 <Route path="/profil"> 
                 <Navbar />
                 <Profil />
                 </Route>
-                `<Route path="/client"> 
-                <Navbar />  
-                <Product />
-                </Route>
-                <Route path="/cart">
-                <Navbar />
-                <Cart />
-                </Route>
-                <Route path="/orders">
-                <Navbar />
-                <Orders />
-                </Route>``
             </Switch>
         );
     }

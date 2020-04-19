@@ -1,16 +1,13 @@
 import React from "react";
 import axios from "axios";
 import { Link } from 'react-router-dom';
-import goog from '../image/goog.jpg';
-import hantu from '../image/hantu.jpg';
-import ProductItem from './ProductItem';
-
+import lapangan from '../image/lapangan.jpg';
 export default class Product extends React.Component
 {
     constructor(props){
         super(props);
         this.state = {
-            products: [],
+            lapangan: [],
             find: "",
             filter: ""
         }
@@ -22,11 +19,11 @@ export default class Product extends React.Component
         this.setState({[e.target.name]: e.target.value})
     }
 
-    GetProducts = () => {
-        let url = "http://localhost/toko_online/public/products"
+    Getlapangan = () => {
+        let url = "http://localhost/lapangan/public/lapangan"
         axios.get(url)
         .then(res => {
-            this.setState({products: res.data.products})
+            this.setState({lapangan: res.data.lapangan})
         })
         .catch(error => {
             console.log(error)
@@ -35,13 +32,13 @@ export default class Product extends React.Component
 
     Search = (e) => {
         if (e.keyCode === 13) {
-            let url = "http://localhost/toko_online/public/products"
+            let url = "http://localhost/lapangan/public/lapangan"
             
             let form = new FormData()
             form.append("find", this.state.find)
             axios.post(url, form)
                 .then(res => {
-                    this.setState({products: res.data.products})
+                    this.setState({lapangan: res.data.lapangan})
                 })
                 .catch(error => {
                     console.log(error);
@@ -50,36 +47,18 @@ export default class Product extends React.Component
     }
 
     componentDidMount() {
-        this.GetProducts()
+        this.Getlapangan()
     }
 
     render() {
-        const renderData = this.state.products.map((item, id_product)=>{
-            return (
-            <ProductItem item={item} key={id_product}/>
-            )
-            })
         return(
             <div className="container">
                 <div className="row">
                 <div className="col-lg-3">
-                    <h1 className="my-4">Shirt Shop</h1>
+                    <h1 className="my-4">Sewa Lapangan</h1>
                         <input type="text" className="form-control" name="find" value={this.state.find} onChange={this.bind} onKeyUp={this.Search} required placeholder="Pencarian.." />
                         <hr></hr>
-                        <h4>Kategori</h4>
-                        <form onSubmit={this.Filter}>
-                            <div className="form-group">
-                                <select className="form-control" name="filter" value={this.state.value} onChange={this.bind} >
-                                    <option value="">Choose...</option>
-                                    <option value="sepatu">Sepatu</option>
-                                    <option value="topi">Topi</option>
-                                    <option value="kaos">Kaos</option>
-                                </select>
-                            </div> 
-                            <button type="submit" className="btn btn-info pull-right m-2">
-                                Filter
-                            </button>
-                        </form>
+
                 </div>
                 <div className="col-lg-9">
                     <div id="slideshow" className="carousel slide my-4" data-ride="carousel">
@@ -89,10 +68,7 @@ export default class Product extends React.Component
                         </ol>
                         <div className="carousel-inner" role="listbox">
                             <div className="carousel-item active">
-                                <img className="d-block img-fluid" src={goog} alt="First slide" />
-                            </div>
-                            <div className="carousel-item">
-                                <img className="d-block img-fluid" src={hantu} alt="Second slide" />
+                                <img className="d-block img-fluid" src={lapangan} alt="First slide" />
                             </div>
                         </div>
                         <a className="carousel-control-prev" href="#slideshow" role="button" data-slide="prev">
@@ -106,7 +82,7 @@ export default class Product extends React.Component
                     </div>
 
                     <div className="row">
-                        {renderData}
+                        {/* {renderData} */}
                         <hr></hr>
                         <Link to="/checkout">
                             <button className="btn btn-success float-right">
